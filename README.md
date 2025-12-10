@@ -1,4 +1,4 @@
-# Proyecto final AGP3141 – Impacto de áreas protegidas recientes en la pobreza comunal
+# Proyecto final: Impacto de áreas protegidas recientes en la pobreza comunal
 
 Autor: **Nicolás Bobadilla**  
 
