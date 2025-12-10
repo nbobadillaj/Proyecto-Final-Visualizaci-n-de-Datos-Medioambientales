@@ -1,9 +1,6 @@
 # Proyecto final AGP3141 – Impacto de áreas protegidas recientes en la pobreza comunal
 
 Autor: **Nicolás Bobadilla**  
-Curso: AGP3141 – Visualización y Análisis de Datos Medioambientales  
-Profesor/a: —  
-Semestre: 2025‑2
 
 ## 1 Descripción general
 
