@@ -17,44 +17,34 @@ editor: visual
 
 # 1. Introducción
 
-Chile ha avanzado en la creación de parques y reservas nacionales durante las últimas décadas. Una de las regiones donde este proceso ha sido más evidente es **Aysén**, caracterizada por su aislamiento geográfico, baja densidad poblacional y una gran proporción de territorio protegido. Por lo general, estas áreas se establecen lejos de zonas urbanas, lo que abre preguntas sobre su relación con variables sociales, como la pobreza.
+Chile ha avanzado en la creación de parques y reservas nacionales durante las últimas décadas. Una de las regiones donde este proceso ha sido más evidente es **Aysén**, caracterizada por su aislamiento geográfico, baja densidad poblacional y una gran proporción de territorio protegido.
 
 En este trabajo exploro:
 
 > **¿La presencia de áreas protegidas coincide con patrones distintos de pobreza entre 2017 y 2022?**
 
-El objetivo no es establecer causalidad, sino **describir tendencias generales** y comparar:
+El objetivo no es establecer causalidad, sino describir tendencias generales y comparar:
 
-- Las comunas de la Región de Aysén (alta presencia de áreas protegidas).
-- El resto de las comunas del país.
+-   Las comunas de la Región de Aysén.
+-   El resto de las comunas del país.
 
 Se analizan dos dimensiones de pobreza:
 
-- **Pobreza por ingresos**
-- **Pobreza multidimensional**
+-   **Pobreza por ingresos**
+-   **Pobreza multidimensional**
 
 # 2. Datos utilizados
 
-A continuación se presentan los datos empleados en el análisis y una descripción general de cada fuente.
-
 ## 2.1 Base comunal de pobreza (2017–2022)
 
-Incluye indicadores de pobreza por ingresos y multidimensional para todas las comunas del país.
-
 ```{r}
-pobreza %>% 
-  select(
-    codigo_comuna, nombre_comuna,
-    pobreza_ingresos_2017, pobreza_ingresos_2022,
-    pobreza_multidimensional_2017, pobreza_multidimensional_2022
-  ) %>% 
-  head()
+pobreza %>% head()
 ```
 
 ## 2.2 Áreas protegidas de la Región de Aysén
 
 ```{r}
-areas_protegidas %>% count(categoria, name = "cantidad")
+areas_protegidas %>% count(categoria)
 ```
 
 ```{r}
@@ -64,7 +54,7 @@ areas_protegidas %>% head(10)
 ## 2.3 Definición de tratamiento
 
 ```{r}
-pobreza %>% count(tratamiento, name = "numero_comunas")
+pobreza %>% count(tratamiento)
 ```
 
 # 3. Exploración gráfica
@@ -72,6 +62,7 @@ pobreza %>% count(tratamiento, name = "numero_comunas")
 ## 3.1 Pobreza por ingresos: comparación 2017 vs 2022
 
 ```{r}
+#| fig-cap: "Figura 1. Distribución de pobreza por ingresos en 2017 y 2022 para Aysén y el resto del país."
 pobreza_long_ingresos <- pobreza %>%
   select(nombre_comuna, tratamiento,
          pobreza_ingresos_2017, pobreza_ingresos_2022) %>%
@@ -86,17 +77,18 @@ ggplot(pobreza_long_ingresos,
        aes(tratamiento, pobreza, fill = anio)) +
   geom_boxplot(alpha = 0.7) +
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
-  labs(
-    title = "Pobreza por ingresos en Aysén vs resto del país",
-    x = "", y = "Pobreza por ingresos",
-    fill = "Año"
-  ) +
+  labs(title="Pobreza por ingresos", x="", y="Pobreza por ingresos") +
   theme_minimal()
 ```
+
+En ambos grupos se observa un aumento de la pobreza por ingresos entre 2017 y 2022. Aysén muestra niveles levemente superiores en ambos años, mientras que el resto del país presenta mayor variabilidad. No se aprecia un patrón que indique un cambio diferencial asociado a la presencia de áreas protegidas.
+
+------------------------------------------------------------------------
 
 ## 3.2 Pobreza multidimensional: comparación 2017 vs 2022
 
 ```{r}
+#| fig-cap: "Figura 2. Comparación de pobreza multidimensional en 2017 y 2022 entre Aysén y el resto del país."
 pobreza_long_multi <- pobreza %>%
   select(nombre_comuna, tratamiento,
          pobreza_multidimensional_2017, pobreza_multidimensional_2022) %>%
@@ -111,29 +103,18 @@ ggplot(pobreza_long_multi,
        aes(tratamiento, pobreza, fill = anio)) +
   geom_boxplot(alpha = 0.7) +
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
-  labs(
-    title = "Pobreza multidimensional en Aysén vs resto del país",
-    x = "", y = "Pobreza multidimensional",
-    fill = "Año"
-  ) +
+  labs(title="Pobreza multidimensional", x="", y="Pobreza multidimensional") +
   theme_minimal()
 ```
+
+La pobreza multidimensional disminuye en ambos grupos entre 2017 y 2022. Aysén parte de niveles ligeramente más altos pero la reducción es similar a la del resto del país, lo cual sugiere tendencias nacionales más que efectos ligados a áreas protegidas.
+
+------------------------------------------------------------------------
 
 ## 3.3 Cambios entre 2017 y 2022
 
 ```{r}
-resumen_cambios <- pobreza %>%
-  group_by(tratamiento) %>%
-  summarise(
-    cambio_prom_ingresos = mean(cambio_ingresos, na.rm = TRUE),
-    cambio_prom_multi = mean(cambio_multidimensional, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-resumen_cambios
-```
-
-```{r}
+#| fig-cap: "Figura 3. Cambios porcentuales en pobreza por ingresos y multidimensional entre 2017 y 2022."
 pobreza_larga_cambios <- pobreza |>
   select(nombre_comuna, tratamiento, cambio_ingresos, cambio_multidimensional) |>
   pivot_longer(
@@ -141,49 +122,43 @@ pobreza_larga_cambios <- pobreza |>
     names_to = "indicador",
     values_to = "cambio"
   ) |>
-  mutate(
-    indicador = recode(indicador,
-      "cambio_ingresos" = "Pobreza por ingresos",
-      "cambio_multidimensional" = "Pobreza multidimensional")
-  )
+  mutate(indicador = recode(indicador,
+      "cambio_ingresos"="Pobreza por ingresos",
+      "cambio_multidimensional"="Pobreza multidimensional"))
 
 ggplot(pobreza_larga_cambios,
        aes(tratamiento, cambio, fill = indicador)) +
-  geom_boxplot(alpha = 0.7, position = position_dodge(width = 0.7)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot(alpha=0.7, position=position_dodge(0.7)) +
+  geom_hline(yintercept=0, linetype="dashed") +
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
-  labs(
-    title = "Cambios en pobreza (2017–2022)",
-    x = "", y = "Cambio porcentual",
-    fill = "Indicador"
-  ) +
+  labs(title="Cambios en pobreza 2017–2022", x="", y="Cambio porcentual") +
   theme_minimal()
 ```
 
+Los cambios porcentuales muestran reducciones similares en ambos indicadores y en ambos grupos. Las diferencias entre Aysén y el resto del país son pequeñas, lo que refuerza la idea de que las áreas protegidas no se asocian a un cambio diferencial observable en este período.
+
+------------------------------------------------------------------------
+
 # 4. Resultados principales
 
-- Las comunas de Aysén presentan niveles de pobreza iniciales levemente superiores al promedio nacional.
-- Entre 2017 y 2022 la pobreza disminuye en ambos grupos.
-- En algunos casos la pobreza por ingresos aumenta ligeramente.
-- La pobreza multidimensional presenta reducciones más consistentes.
+-   Aysén presenta niveles iniciales ligeramente superiores de pobreza.\
+-   La pobreza multidimensional disminuye en ambos grupos.\
+-   La pobreza por ingresos aumenta en ambos grupos en magnitudes comparables.\
+-   No se identifican patrones divergentes asociados a áreas protegidas.
 
-# 5. Limitaciones
+# 5. Conclusiones
 
-- Clasificación simple del tratamiento.
-- No se incluyen variables económicas o geográficas adicionales.
-- El análisis es descriptivo; no hay inferencia causal.
+El análisis sugiere que las comunas de Aysén muestran tendencias de pobreza similares a las del resto del país entre 2017 y 2022. Las diferencias observadas son pequeñas y no permiten asociar cambios específicos a la presencia de áreas protegidas. Para evaluar efectos más profundos se requerirían más variables y análisis causal.
 
-# 6. Reproducibilidad
+# 6. Limitaciones
 
-Este trabajo depende de dos archivos:
+-   Tratamiento simplificado.\
+-   No se incorporan variables económicas o territoriales adicionales.\
+-   Enfoque descriptivo sin inferencia causal.
 
-```
+# 7. Reproducibilidad
+
+```         
 data/raw/pobreza_comunal_2017_2022.csv
 data/raw/areas_protegidas_aysen.csv
-```
-
-Para generar el informe:
-
-```{r}
-# quarto::quarto_render("trabajo_final.qmd")
 ```
