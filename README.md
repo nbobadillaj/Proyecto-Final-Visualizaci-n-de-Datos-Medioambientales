@@ -1,100 +1,101 @@
-# Proyecto final: Impacto de áreas protegidas recientes en la pobreza comunal
+# 🌿 Proyecto Final: Impacto de Áreas Protegidas en la Pobreza Comunal  
+**Autor:** Nicolás Bobadilla  
 
-Autor: **Nicolás Bobadilla**  
+> **Nota de transparencia:**  
+> Durante la elaboración de este proyecto se utilizó **Inteligencia Artificial (ChatGPT)** como apoyo en tareas específicas, tales como optimización de código en R, mejora estética de gráficos, organización del informe y refinamiento del texto. Todas las decisiones metodológicas, análisis de resultados e interpretaciones fueron realizadas de manera autónoma por el autor.
 
-## 1 Descripción general
+---
 
-Este repositorio contiene el proyecto final del curso, cuyo objetivo
-es responder a la pregunta:
+## 1. Descripción general
 
-> **¿Cómo varían la pobreza por ingresos y la pobreza multidimensional
-> en las comunas donde se declara un parque nacional y en comunas
-> similares sin parques?**
+Este repositorio contiene el proyecto final del curso, donde se analiza:
 
-Nos enfocamos en el **Parque Nacional Patagonia**, creado oficialmente
-en diciembre de 2018 en las comunas de **Chile Chico** y **Cochrane**
-por el Decreto Supremo N.º 98.  Para evaluar
-los cambios, comparamos la evolución de las tasas de pobreza entre
-2017 y 2022 en estas comunas (grupo tratado) con cuatro comunas
-urbanas sin áreas protegidas nuevas en el mismo periodo (Calama,
-La Serena, Talca y Santiago).  Los datos provienen del Banco
-Integrado de Datos (BIDAT) del Ministerio de Desarrollo Social y
-Familia y se procesan con una metodología de **diferencia en
-diferencias**.
+**¿Cómo varían la pobreza por ingresos y la pobreza multidimensional en comunas donde se declara un parque nacional, comparadas con comunas similares sin nuevas áreas protegidas?**
 
-## 2 Estructura del repositorio
+El caso de estudio corresponde al **Parque Nacional Patagonia**, creado en 2018 en las comunas de **Chile Chico** y **Cochrane**.  
+Como grupo de comparación, se incluyeron cuatro comunas urbanas sin nuevas áreas protegidas en el período 2017–2022.
 
-```
+Los datos provienen del **Banco Integrado de Datos (BIDAT)** del Ministerio de Desarrollo Social.  
+El proyecto utiliza herramientas exploratorias y elementos de diferencia en diferencias para observar tendencias.
+
+---
+
+## 2. Estructura del repositorio
+
+```plaintext
 agp3141-final-nbobadilla/
-├── README.md                 # Este archivo
-├── index.qmd                 # Informe en formato Quarto (sitio web narrativo)
-├── .gitignore                # Archivos y carpetas a excluir del control de versiones
+├── README.md                     # Este archivo
+├── index.qmd                     # Informe Quarto
+├── .gitignore                    # Exclusiones del repo
 ├── data/
 │   ├── raw/
-│   │   └── poverty_panel_2017_2022.csv  # Panel de pobreza por ingresos y multidimensional (2017 y 2022)
+│   │   └── poverty_panel_2017_2022.csv
 │   └── processed/
-│       └── datos_procesados.csv        # Dataset con variables tratadas y diferencias calculadas
+│       └── datos_procesados.csv
 ├── R/
-│   └── 01_eda.R               # Script de análisis exploratorio y generación de figuras
-├── figs/                      # Figuras generadas por el script
-└── docs/                      # Notas adicionales (vacío por defecto)
+│   └── 01_eda.R                  # Exploración y figuras
+├── figs/                         # Figuras generadas
+└── docs/                         # Notas adicionales
 ```
 
-## 3 Reproducibilidad
+---
 
-### Requisitos
+## 3. Reproducibilidad
 
-- **R** versión ≥ 4.3
+### Requisitos  
+- **R ≥ 4.3**
 - Paquetes:
-  - `tidyverse` (para manipulación de datos y gráficos)
-  - `lubridate` (manejo de fechas)
-  - `quarto` (para renderizar el sitio web)
+  - `tidyverse`
+  - `lubridate`
+  - `quarto`
 
 ### Pasos para reproducir
 
-1. Clonar este repositorio o descargarlo en tu computador.
-2. Asegurarse de que el archivo `poverty_panel_2017_2022.csv` se
-   encuentre en `data/raw/`.
-3. Abrir **RStudio** en la carpeta del proyecto y ejecutar el script:
+1. Descargar o clonar este repositorio.  
+2. Verificar que el dataset esté ubicado en `data/raw/`.  
+3. Ejecutar el script exploratorio:
 
-   ```r
-   source("R/01_eda.R")
-   ```
+```r
+source("R/01_eda.R")
+```
 
-   Este script lee los datos, crea la variable de tratamiento,
-   calcula las diferencias (2017–2022), produce gráficos y guarda el
-   dataset procesado en `data/processed/datos_procesados.csv`.  Las
-   figuras se guardan en la carpeta `figs/`.
+4. Renderizar el informe:
 
-4. Renderizar el informe Quarto para generar el sitio web narrativo:
+```r
+quarto::quarto_render("index.qmd")
+```
 
-   ```r
-   quarto::quarto_render("index.qmd")
-   ```
+Esto generará `index.html`, que puede visualizarse localmente o publicarse con GitHub Pages.
 
-   El archivo resultante `index.html` resume los hallazgos y puede
-   publicarse con GitHub Pages.
+---
 
-## 4 Análisis exploratorio
+## 4. Análisis exploratorio
 
-El análisis exploratorio se realiza en `R/01_eda.R` e incluye:
+El script `01_eda.R` realiza:
 
-- Importar el panel de pobreza y crear la variable **tratamiento**
-  (1 para Chile Chico y Cochrane; 0 para comunas de control).
-- Calcular las diferencias en pobreza por ingresos y multidimensional
-  entre 2017 y 2022.
-- Generar figuras:
-  1. Evolución de la pobreza por ingresos (promedio por grupo).
-  2. Variación de la pobreza multidimensional (boxplot de Δ por grupo).
-  3. Relación entre pobreza por ingresos y multidimensional en 2022.
+- Importación del panel de pobreza (2017–2022)  
+- Creación de la variable *tratamiento*  
+- Cálculo de cambios entre años  
+- Generación de gráficos descriptivos
 
-Los resultados se sintetizan en `index.qmd` con texto y visualizaciones.
+Los resultados se presentan narrativamente en **index.qmd**.
 
-## 5 Sitio web narrativo
+---
 
-El archivo `index.qmd` es un documento Quarto que cuenta la historia
-de este proyecto de manera accesible para una audiencia general.
-Incluye introducción, descripción de datos, visualizaciones
-interactivas, hallazgos clave y discusiones sobre limitaciones y
-posibles explicaciones.  Para visualizarlo como página web basta
-con renderizarlo y abrir `index.html` en un navegador.
+## 5. Sitio web narrativo
+
+El archivo `index.qmd` organiza el proyecto en una estructura clara y amigable:
+
+- Introducción  
+- Datos utilizados  
+- Figuras comparativas  
+- Hallazgos principales  
+- Limitaciones  
+
+---
+
+## 6. Licencia y uso académico
+
+Este repositorio es de uso académico. Puede revisarse y adaptarse citando adecuadamente al autor.
+
+---
