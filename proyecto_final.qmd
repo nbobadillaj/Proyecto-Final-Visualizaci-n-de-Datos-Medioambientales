@@ -1,5 +1,5 @@
 ---
-title: "Proyecto final AGP3141 – Impacto de áreas protegidas recientes en la pobreza comunal"
+title: Impacto de áreas protegidas recientes en la pobreza comunal"
 author: "Nicolás Bobadilla"
 format:
   html:
@@ -24,7 +24,7 @@ datos <- read_csv("data/processed/datos_procesados.csv", show_col_types = FALSE)
 
 # Introducción
 
-Las áreas silvestres protegidas del Estado (ASP) cumplen un rol clave en la conservación de la biodiversidad de Chile. La creación de nuevos parques y reservas también puede generar efectos económicos y sociales a nivel local: por un lado, restringe actividades productivas; por otro, puede impulsar el turismo, atraer inversión pública y fortalecer programas sociales.
+Las áreas silvestres protegidas del Estado (ASP) cumplen un rol clave en la conservación de la biodiversidad de Chile. La creación de nuevos parques y reservas también puede generar efectos económicos y sociales a nivel local: por un lado, restringe actividades productivas; por otro, puede impulsar el turismo, atraer inversión pública y fortalecer programas sociales. Es importante tener en cuenta que las áreas protegidas se encuentran alejadas de urbes o zonas urbanas muy concurridas. 
 
 En este proyecto se analiza si la instauración del **Parque Nacional Patagonia** (D.S. Nº 98, 2018), que abarca las comunas de **Chile Chico** y **Cochrane**, coincide con cambios en los niveles de pobreza. Estas comunas conforman el **grupo tratado**, mientras que el **grupo de control** corresponde al resto de las comunas del país para las cuales existen datos disponibles entre 2017 y 2022.
 
@@ -41,16 +41,20 @@ Los datos provienen del **Banco Integrado de Datos (BIDAT)** del Ministerio de D
 
 El script `R/01_eda.R`:
 
-- Lee el panel comunal desde `data/raw/poverty_panel_2017_2022.csv`
+- Lee el panel comunal desde `data/raw/pobreza_comunal_2017_2022.csv`
 - Define la variable `tratamiento`
-- Califica cambios (`delta_ing`, `delta_multi`)
+- Calcula los cambios entre 2017 y 2022 (`delta_ing`, `delta_multi`)
 - Exporta el dataset procesado a `data/processed/datos_procesados.csv`
 - Genera y guarda las figuras usadas en este informe
 
+A continuación se muestra un vistazo de las variables utilizadas:
+
 ```{r}
 datos %>%
-  select(`Nombre comuna`, tratamiento, p_ing_2017, p_ing_2022,
-         p_multi_2017, p_multi_2022, delta_ing, delta_multi) %>%
+  select(nombre_comuna, tratamiento,
+         pobreza_ingresos_2017, pobreza_ingresos_2022,
+         pobreza_multidimensional_2017, pobreza_multidimensional_2022,
+         delta_ing, delta_multi) %>%
   head()
 ```
 
@@ -77,6 +81,20 @@ knitr::include_graphics("figs/fig3_relacion_ing_multi.png")
 ```
 
 La relación positiva entre ambas medidas indica que las comunas con mayor pobreza por ingresos suelen presentar mayores niveles de pobreza multidimensional. Las comunas tratadas se ubican en rangos intermedios, mostrando mejoras multidimensionales más rápidas que las monetarias.
+
+# Limitaciones del estudio
+
+- A pesar de los patrones observados, este análisis presenta algunas limitaciones que es importante considerar al interpretar los resultados:
+
+- Disponibilidad limitada de datos: solo existen estimaciones comunales comparables para 2017 y 2022, lo que impide evaluar tendencias previas o efectos de largo plazo asociados a la creación del Parque Nacional Patagonia.
+
+- Tamaño reducido del grupo tratado: las comunas tratadas son únicamente Chile Chico y Cochrane, lo que disminuye la potencia estadística y aumenta la sensibilidad del análisis frente a valores atípicos.
+
+- Factores externos no controlados: elementos como migración, shocks económicos, políticas sociales locales, inversión pública o los efectos de la pandemia podrían influir en los cambios observados en pobreza, sin que el análisis pueda aislarlos.
+
+- No permite establecer causalidad: el enfoque descriptivo y las diferencias simples no permiten atribuir causalidad. Para ello se requieren métodos adicionales, como modelos DiD formales, matching o paneles con mayor profundidad temporal.
+
+- Diferencias estructurales entre comunas: las comunas tratadas y de control pueden diferir en ruralidad, tamaño poblacional, estructura productiva o acceso a servicios, lo que podría generar sesgos en las comparaciones directas.
 
 # Conclusiones
 

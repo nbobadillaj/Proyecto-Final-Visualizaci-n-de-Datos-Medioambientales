@@ -7,23 +7,33 @@ library(readr)
 library(lubridate)
 library(scales)  # para formato porcentual en gráficos
 
-
+# -----------------------------------------------------------------------------
 # 1. Cargar datos
+# -----------------------------------------------------------------------------
 
 # Leemos el panel de pobreza para 2017 y 2022 desde la carpeta del proyecto.
-# Este archivo fue descargado del BIDAT y guardado en data/raw/.
 panel <- read_csv("data/raw/pobreza_comunal_2017_2022.csv",
                   show_col_types = FALSE)
 
-# Definimos la variable de tratamiento: valor 1 para las comunas
-# donde se creó el Parque Nacional Patagonia (Chile Chico y Cochrane),
-# y 0 para el resto (grupo de control).
-# Calculamos también las diferencias 2022 – 2017 para ambos indicadores.
+# Asegurarnos de tener una columna con el nombre de la comuna
+# La normalizamos a un nombre único: "nombre_comuna"
+if ("Nombre comuna" %in% names(panel)) {
+  panel <- panel %>% rename(nombre_comuna = `Nombre comuna`)
+} else if ("Nombre_comuna" %in% names(panel)) {
+  panel <- panel %>% rename(nombre_comuna = Nombre_comuna)
+} else if ("nombre_comuna" %in% names(panel)) {
+  panel <- panel %>% rename(nombre_comuna = nombre_comuna)
+} else {
+  stop("No encontré la columna con el nombre de la comuna. Revisa names(panel).")
+}
+
+# Definimos comunas tratadas (Parque Nacional Patagonia)
 comunas_tratadas <- c("Chile Chico", "Cochrane")
 
+# Creamos variable tratamiento y cambios 2022–2017
 datos <- panel %>%
   mutate(
-    tratamiento = if_else(`Nombre comuna` %in% comunas_tratadas, 1, 0),
+    tratamiento = if_else(nombre_comuna %in% comunas_tratadas, 1, 0),
     delta_ing   = p_ing_2022  - p_ing_2017,
     delta_multi = p_multi_2022 - p_multi_2017
   )
@@ -32,8 +42,9 @@ datos <- panel %>%
 if (!dir.exists("data/processed")) dir.create("data/processed", recursive = TRUE)
 write_csv(datos, "data/processed/datos_procesados.csv")
 
+# -----------------------------------------------------------------------------
 # 2. Estadísticas descriptivas y pruebas
-
+# -----------------------------------------------------------------------------
 
 resumen <- datos %>%
   summarise(
@@ -59,7 +70,7 @@ print(t_multi_2017)
 print("Prueba t: pobreza multidimensional 2022 (trat vs control)")
 print(t_multi_2022)
 
-# Diferencias en diferencias (DiD) para ambos indicadores
+# Diferencias en diferencias (DiD)
 did_ing <- with(datos,
                 (mean(p_ing_2022[tratamiento == 1]) - mean(p_ing_2017[tratamiento == 1])) -
                   (mean(p_ing_2022[tratamiento == 0]) - mean(p_ing_2017[tratamiento == 0])))
@@ -71,14 +82,15 @@ did_multi <- with(datos,
 print(paste("Diferencia en diferencias – pobreza por ingresos:", round(did_ing, 4)))
 print(paste("Diferencia en diferencias – pobreza multidimensional:", round(did_multi, 4)))
 
-
+# -----------------------------------------------------------------------------
 # 3. Gráficos exploratorios
+# -----------------------------------------------------------------------------
 
 if (!dir.exists("figs")) dir.create("figs", recursive = TRUE)
 
 ## Figura 1: Evolución de la pobreza por ingresos (promedio por grupo)
 datos_long <- datos %>%
-  select(`Nombre comuna`, tratamiento, p_ing_2017, p_ing_2022) %>%
+  select(nombre_comuna, tratamiento, p_ing_2017, p_ing_2022) %>%
   pivot_longer(cols = c(p_ing_2017, p_ing_2022),
                names_to = "anio", values_to = "pobreza_ingresos") %>%
   mutate(anio = recode(anio, p_ing_2017 = 2017, p_ing_2022 = 2022),
@@ -125,3 +137,4 @@ fig3 <- ggplot(datos,
   theme_minimal()
 ggsave("figs/fig3_relacion_ing_multi.png", fig3, width = 6, height = 4, dpi = 300)
 
+message("Análisis exploratorio completado. Datos procesados y figuras guardadas.")
