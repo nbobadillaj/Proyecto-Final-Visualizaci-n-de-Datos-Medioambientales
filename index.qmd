@@ -42,7 +42,7 @@ pobreza <- pobreza %>%
 
 # 1. Introducción
 
-Chile ha avanzado en la creación de parques y reservas nacionales durante las últimas décadas. Una de las regiones donde este proceso se ha intensificado es **Aysén**, caracterizada por una combinación única de aislamiento geográfico, baja densidad poblacional y una alta proporción de territorio protegido.
+Chile ha avanzado en la creación de Parques y Reservas Nacionales durante las últimas décadas. Una de las regiones donde este proceso se ha intensificado es **Aysén**, caracterizada por una combinación única de aislamiento geográfico, baja densidad poblacional y una alta proporción de territorio protegido. Por lo general las Areas Protegidas se establecen en lugares alejados de zonas urbanas, donde no puedan existir conflictos de interés. Es por eso que se vuelve interesante el comportamiento social con respecto a estas declaraciones.
 
 En este informe exploro la siguiente pregunta:
 
@@ -172,14 +172,15 @@ resumen_cambios <- pobreza %>%
 resumen_cambios
 ```
 
-```{r}
-pobreza_larga_cambios <- pobreza %>%
-  select(nombre_comuna, tratamiento, cambio_ingresos, cambio_multidimensional) %>%
+```{r, eval=FALSE}
+
+pobreza_larga_cambios <- pobreza |>
+  select(nombre_comuna, tratamiento, cambio_ingresos, cambio_multidimensional) |>
   pivot_longer(
     cols = starts_with("cambio_"),
     names_to = "indicador",
     values_to = "cambio"
-  ) %>%
+  ) |>
   mutate(
     indicador = recode(
       indicador,
@@ -199,6 +200,7 @@ ggplot(pobreza_larga_cambios,
     fill = "Indicador"
   ) +
   theme_minimal()
+
 ```
 
 # 4. Resultados principales
@@ -228,5 +230,5 @@ data/raw/areas_protegidas_aysen.csv
 Para generar el informe:
 
 ```{r}
-quarto::quarto_render("index.qmd")
+#quarto::quarto_render("index.qmd")
 ```
