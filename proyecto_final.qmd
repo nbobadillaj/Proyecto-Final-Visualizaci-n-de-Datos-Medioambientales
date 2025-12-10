@@ -1,0 +1,101 @@
+---
+title: "Proyecto final AGP3141 – Impacto de áreas protegidas recientes en la pobreza comunal"
+author: "Nicolás Bobadilla"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(tidyverse)
+library(readr)
+library(scales)
+
+# Cargar datos procesados generados por 01_eda.R
+datos <- read_csv("data/processed/datos_procesados.csv", show_col_types = FALSE)
+```
+
+# Introducción
+
+Las áreas silvestres protegidas del Estado (ASP) cumplen un rol clave en la conservación de la biodiversidad de Chile. La creación de nuevos parques y reservas también puede generar efectos económicos y sociales a nivel local: por un lado, restringe actividades productivas; por otro, puede impulsar el turismo, atraer inversión pública y fortalecer programas sociales.
+
+En este proyecto se analiza si la instauración del **Parque Nacional Patagonia** (D.S. Nº 98, 2018), que abarca las comunas de **Chile Chico** y **Cochrane**, coincide con cambios en los niveles de pobreza. Estas comunas conforman el **grupo tratado**, mientras que el **grupo de control** corresponde al resto de las comunas del país para las cuales existen datos disponibles entre 2017 y 2022.
+
+Los indicadores analizados son:
+
+- **Pobreza por ingresos**
+- **Pobreza multidimensional**
+
+El análisis es descriptivo y utiliza estimaciones simples de cambio y diferencia en diferencias (DiD).
+
+# Datos
+
+Los datos provienen del **Banco Integrado de Datos (BIDAT)** del Ministerio de Desarrollo Social y Familia, que reporta estimaciones comunales para pobreza por ingresos y pobreza multidimensional.  
+
+El script `R/01_eda.R`:
+
+- Lee el panel comunal desde `data/raw/poverty_panel_2017_2022.csv`
+- Define la variable `tratamiento`
+- Califica cambios (`delta_ing`, `delta_multi`)
+- Exporta el dataset procesado a `data/processed/datos_procesados.csv`
+- Genera y guarda las figuras usadas en este informe
+
+```{r}
+datos %>%
+  select(`Nombre comuna`, tratamiento, p_ing_2017, p_ing_2022,
+         p_multi_2017, p_multi_2022, delta_ing, delta_multi) %>%
+  head()
+```
+
+# Hallazgo 1 – Evolución de la pobreza por ingresos
+
+```{r}
+knitr::include_graphics("figs/fig1_evolucion_pobreza_ingresos.png")
+```
+
+Las comunas tratadas muestran reducciones mínimas —o leves aumentos— en su pobreza por ingresos, mientras que las comunas de control exhiben descensos más claros. Esto sugiere que la creación del parque no se tradujo en una mejora monetaria inmediata. Sin embargo, este resultado no implica causalidad, dada la influencia de factores macroeconómicos y el tamaño reducido del grupo tratado.
+
+# Hallazgo 2 – Cambios en la pobreza multidimensional
+
+```{r}
+knitr::include_graphics("figs/fig2_variacion_pobreza_multidimensional.png")
+```
+
+Las comunas tratadas presentan descensos más pronunciados en la pobreza multidimensional. Esto indica mejoras en condiciones como vivienda, salud y educación, que pueden ser consistentes con inversiones públicas y sociales realizadas en la zona tras la creación del parque.
+
+# Hallazgo 3 – Relación entre pobreza por ingresos y multidimensional
+
+```{r}
+knitr::include_graphics("figs/fig3_relacion_ing_multi.png")
+```
+
+La relación positiva entre ambas medidas indica que las comunas con mayor pobreza por ingresos suelen presentar mayores niveles de pobreza multidimensional. Las comunas tratadas se ubican en rangos intermedios, mostrando mejoras multidimensionales más rápidas que las monetarias.
+
+# Conclusiones
+
+- Las comunas donde se creó el Parque Nacional Patagonia no presentan reducciones claras en la pobreza por ingresos entre 2017 y 2022.
+- Sí se observan mejoras importantes en pobreza multidimensional, lo que sugiere avances sociales en dimensiones no monetarias.
+- Los patrones observados son consistentes con la idea de que los beneficios sociales pueden manifestarse antes que los monetarios.
+
+Este análisis es descriptivo y no establece causalidad. Se recomienda complementar con series históricas más largas y métodos econométricos más robustos.
+
+# Reproducibilidad
+
+1. Ejecutar el análisis exploratorio:
+
+```r
+source("R/01_eda.R")
+```
+
+# Bibliografía
+
+- **Ministerio de Desarrollo Social y Familia (MIDESO).** Banco Integrado de Datos (BIDAT). Indicadores comunales de pobreza.  
+- **CASEN – Encuesta de Caracterización Socioeconómica Nacional.** Ministerio de Desarrollo Social y Familia.  
+- **Sistema Nacional de Áreas Silvestres Protegidas del Estado (SNASPE).** Información oficial de parques y reservas. Ministerio del Medio Ambiente / CONAF.  
