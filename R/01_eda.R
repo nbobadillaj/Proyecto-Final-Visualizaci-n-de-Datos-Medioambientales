@@ -126,6 +126,3 @@ fig3 <- ggplot(datos, aes(x = p_ing_2022, y = p_multi_2022,
        color = "Grupo") +
   theme_minimal()
 ggsave("figs/fig3_relacion_ing_multi.png", fig3, width = 6, height = 4, dpi = 300)
-
-# Mensaje de finalización
-message("Análisis exploratorio completado.  Datos procesados y figuras guardadas.")
