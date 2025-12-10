@@ -16,7 +16,7 @@ es responder a la pregunta:
 
 Nos enfocamos en el **Parque Nacional Patagonia**, creado oficialmente
 en diciembre de 2018 en las comunas de **Chile Chico** y **Cochrane**
-por el Decreto Supremo N.º 98【696378958327625†L63-L67】.  Para evaluar
+por el Decreto Supremo N.º 98.  Para evaluar
 los cambios, comparamos la evolución de las tasas de pobreza entre
 2017 y 2022 en estas comunas (grupo tratado) con cuatro comunas
 urbanas sin áreas protegidas nuevas en el mismo periodo (Calama,
@@ -101,13 +101,3 @@ Incluye introducción, descripción de datos, visualizaciones
 interactivas, hallazgos clave y discusiones sobre limitaciones y
 posibles explicaciones.  Para visualizarlo como página web basta
 con renderizarlo y abrir `index.html` en un navegador.
-
-## 6 Uso de IA generativa
-
-En este proyecto se empleó inteligencia artificial generativa para
-apoyar la organización de la carpeta, la redacción de este README y
-la estructura del informe Quarto.  Sin embargo, el análisis de datos,
-la elaboración de gráficos y la interpretación de resultados fueron
-realizados íntegramente por el autor, basados en datos oficiales y
-literatura científica sobre el impacto de áreas protegidas【696378958327625†L63-L67】
-【961990098003751†L152-L156】.
