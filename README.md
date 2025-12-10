@@ -2,7 +2,7 @@
 **Autor:** Nicolás Bobadilla  
 
 > **Nota de transparencia:**  
-> Durante la elaboración de este proyecto se utilizó **Inteligencia Artificial (ChatGPT)** como apoyo en tareas específicas, tales como optimización de código en R, mejora estética de gráficos, organización del informe y refinamiento del texto. Todas las decisiones metodológicas, análisis de resultados e interpretaciones fueron realizadas de manera autónoma por el autor.
+> Durante la elaboración de este proyecto se utilizó **Inteligencia Artificial (ChatGPT)** como apoyo en tareas específicas, tales como optimización de código en R, mejora estética de gráficos y organización del informe. Todas las decisiones metodológicas, análisis de resultados e interpretaciones fueron realizadas de manera autónoma por el autor.
 
 ---
 
